@@ -228,7 +228,18 @@ class PapelariaApp:
         if not nome_produto or preco_produto == '' or quantidade_produto == '':
             QMessageBox.critical(dialog, "Erro no Cadastro", "Por favor, verifique os dados inseridos.")
             return
+        
+        with self.banco_de_dados.conectar() as conexao:
+            cursor = conexao.cursor()
+            cursor.execute("SELECT nome FROM produtos WHERE nome = ?", (nome_produto,))
+            existing_nome = cursor.fetchone()
 
+        if existing_nome:
+            QMessageBox.critical(dialog, "Erro no Cadastro", f"O produto: '{nome_produto}' já cadastrado.")
+            return
+
+        #Alterar a entrada do preco de , para .
+        preco_produto = preco_produto.replace(",",".")
         self.operacoes_bd.cadastrar_produto(nome_produto, float(preco_produto), int(quantidade_produto))
         QMessageBox.information(dialog, "Cadastro de Produto", "Produto cadastrado com sucesso.")
         dialog.accept()
@@ -246,7 +257,7 @@ class PapelariaApp:
         layout.addRow("Nome do Produto (comece a digitar):", nome_produto_var)
 
         enviar_button = QPushButton("Enviar")
-        enviar_button.clicked.connect(lambda: self.enviar_venda(dialog, cpf_cliente_var.text(), nome_produto_var.text()))
+        enviar_button.clicked.connect(lambda: self.enviar_venda(dialog, cpf_cliente_var.int(), nome_produto_var.text()))
 
         layout.addRow(enviar_button)
 
