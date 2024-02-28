@@ -257,7 +257,7 @@ class PapelariaApp:
         layout.addRow("Nome do Produto (comece a digitar):", nome_produto_var)
 
         enviar_button = QPushButton("Enviar")
-        enviar_button.clicked.connect(lambda: self.enviar_venda(dialog, cpf_cliente_var.int(), nome_produto_var.text()))
+        enviar_button.clicked.connect(lambda: self.enviar_venda(dialog, cpf_cliente_var.text(), nome_produto_var.text()))
 
         layout.addRow(enviar_button)
 
